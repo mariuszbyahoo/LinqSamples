@@ -5,6 +5,9 @@ using System.IO;
 
 namespace LinqSamples
 {
+    /*
+     * LINQ Fundamentals by Scott Allen Mod 2 Vid 3 done.
+     */
     class Program
     {
         static void Main(string[] args)

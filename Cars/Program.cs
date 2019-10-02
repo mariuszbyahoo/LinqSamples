@@ -18,16 +18,9 @@ namespace Cars
             Thread.CurrentThread.CurrentUICulture = culture;
 
             var cars = ProcessFile("fuel.csv");
+            var manufacturers = ProcessManufacturers("manufacturers.csv");
 
-            // Quantifying Data in LINQ:
-            var result = cars.Any(c => c.Manufacturer == "Ford"); // Returns True/False
-            var result2 = cars.All(c => c.Manufacturer == "Ford"); // Returns True/False
-
-            Console.WriteLine(result);
-            Console.WriteLine(result2);
-
-            //Query syntax
-            var query2 = from car in cars
+            var query = from car in cars
                          where car.Manufacturer == "BMW" && car.Year == 2016
                          orderby car.Combined descending, car.Name ascending
                          select new
@@ -36,24 +29,24 @@ namespace Cars
                              car.Name,
                              car.Combined
                          };
-            // Select statement above uses shortened syntax and returns a new anonymous type
-            // object; good for working with files which contains a plenty of columns to 
-            // deal with
+        }
 
-            // SelectMany below flattens the data; in the case below it selects specific 
-            // car's name from the list of car objects. It flattens the multi-dimension collections.
-            var result3 = cars.SelectMany(c => c.Name);
-
-                foreach (var character in result3)
-                {
-                    Console.WriteLine(character);
-                }
-           
-
-            //foreach (var car in query2.Take(10))
-            //{
-            //    Console.WriteLine($"{car.Manufacturer} {car.Name} : {car.Combined}");
-            //}
+        private static List<Manufacturer> ProcessManufacturers(string path)
+        {
+            var query =
+                File.ReadAllLines(path)
+                    .Where(L => L.Length > 1)
+                    .Select(L => 
+                    {
+                        var columns = L.Split(",");
+                        return new Manufacturer
+                        {
+                            Name = columns[0],
+                            Headquaters = columns[1],
+                            Year = int.Parse(columns[2])
+                        };
+                    });
+            return query.ToList();
         }
 
         private static List<Car> ProcessFile(string path)

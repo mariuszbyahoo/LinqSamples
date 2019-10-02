@@ -21,16 +21,17 @@ namespace Cars
             var manufacturers = ProcessManufacturers("manufacturers.csv");
             // Query syntax
             var query =
-                from manufacturer in manufacturers
-                join car in cars on manufacturer.Name equals car.Manufacturer
-                    into carGroup
-                orderby manufacturer.Name
+                from car in cars
+                group car by car.Manufacturer into carGroup
                 select new
                 {
-                    Manufacturer = manufacturer,
-                    Cars = carGroup
-                } into result //This statement outputs the gouping result into a new object
-                group result by result.Manufacturer.Headquaters; // Now we may group them all
+                    Name = carGroup.Key,
+                    Max = carGroup.Max(c => c.Combined),
+                    Min = carGroup.Min(c => c.Combined),
+                    Avg = carGroup.Average(c => c.Combined)
+                } into result
+                orderby result.Max descending
+                select result;
 
             // Extension method syntax, in this case a little bit simplier.
 
@@ -43,17 +44,13 @@ namespace Cars
                                 })
                 .GroupBy(m => m.Manufacturer.Headquaters); // same as above, flattening both collections into one.
 
-            foreach (var group in query2)
+            foreach (var result in query)
             {
 
-                Console.WriteLine(group.Key);
-
-                foreach (var car in group.SelectMany(g => g.Cars)
-                    .OrderByDescending(c => c.Combined)
-                    .Take(3))
-                {
-                    Console.WriteLine($"\t{car.Name} : {car.Combined} ");
-                }
+                Console.WriteLine(result.Name);
+                Console.WriteLine($"\t Max: {result.Max}");
+                Console.WriteLine($"\t Min: {result.Min}");
+                Console.WriteLine($"\t Avg: {result.Avg}");
             }
         }
 

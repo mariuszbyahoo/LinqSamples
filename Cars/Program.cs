@@ -19,14 +19,13 @@ namespace Cars
 
             var cars = ProcessFile("fuel.csv");
 
-            // Extension Method syntax
-            var top = cars.Where(c => c.Manufacturer == "BMW" && c.Year == 2016)
-                            .OrderByDescending(c => c.Combined)
-                            .ThenBy(c => c.Name)
-                            .Select(c => c)
-                            .First();
+            // Quantifying Data in LINQ:
+            var result = cars.Any(c => c.Manufacturer == "Ford"); // Returns True/False
+            var result2 = cars.All(c => c.Manufacturer == "Ford"); // Returns True/False
 
-            Console.WriteLine(top.Name);
+
+            Console.WriteLine(result);
+            Console.WriteLine(result2);
 
             //Query syntax
             var query2 = from car in cars

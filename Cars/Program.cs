@@ -33,7 +33,35 @@ namespace Cars
                              car.Combined
                          };
 
-            foreach (var car in query.Take(10))
+            var query2 =
+                cars.Join(manufacturers,
+                            c => c.Manufacturer,
+                            m => m.Name,
+                                  (c, m) => new
+                                  {
+                                      m.Headquaters,
+                                      c.Name,
+                                      c.Combined
+                                  })
+                            .OrderByDescending(c => c.Combined)
+                            .ThenBy(c => c.Name);
+            // Below longer version of the same above, using Extension Method Syntax:
+
+                        //    (c, m) => new
+                        //    {
+                        //        Car = c,
+                        //        Manufacturer = m
+                        //    })
+                        //.OrderByDescending(c => c.Car.Combined)
+                        //.ThenBy(c => c.Car.Name)
+                        //.Select(c => new
+                        //{
+                        //    c.Manufacturer.Headquaters,
+                        //    c.Car.Name,
+                        //    c.Car.Combined
+                        //});
+
+            foreach (var car in query2.Take(10))
             {
                 Console.WriteLine($"{car.Headquaters} {car.Name} : {car.Combined}");
             }

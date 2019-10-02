@@ -6,7 +6,7 @@ namespace Cars
 {
     public class Car
     {
-        public string Year { get; set; }
+        public int Year { get; set; }
         public string Manufacturer { get; set; }
         public string Name { get; set; }
         public double Displacement { get; set; }
@@ -22,7 +22,7 @@ namespace Cars
 
             return new Car
             {
-                Year = columns[0],
+                Year = int.Parse(columns[0]),
                 Manufacturer = columns[1],
                 Name = columns[2],
                 Displacement = double.Parse(columns[3]),

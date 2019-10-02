@@ -18,15 +18,23 @@ namespace Cars
             Thread.CurrentThread.CurrentUICulture = culture;
 
             var cars = ProcessFile("fuel.csv");
+
             // Extension Method syntax
-            var query = cars.OrderByDescending(c => c.Combined)
-                            .ThenBy(c => c.Name); // Tied sorting
+            var top = cars.Where(c => c.Manufacturer == "BMW" && c.Year == 2016)
+                            .OrderByDescending(c => c.Combined)
+                            .ThenBy(c => c.Name)
+                            .Select(c => c)
+                            .First();
+
+            Console.WriteLine(top.Name);
+
             //Query syntax
             var query2 = from car in cars
+                         where car.Manufacturer == "BMW"  && car.Year == 2016
                          orderby car.Combined descending, car.Name ascending
                          select car;
 
-            foreach (var car in query.Take(10))
+            foreach (var car in query2.Take(10))
             {
                 Console.WriteLine($"{car.Name} : {car.Combined}");
             }

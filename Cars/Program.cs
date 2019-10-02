@@ -18,10 +18,17 @@ namespace Cars
             Thread.CurrentThread.CurrentUICulture = culture;
 
             var cars = ProcessFile("fuel.csv");
+            // Extension Method syntax
+            var query = cars.OrderByDescending(c => c.Combined)
+                            .ThenBy(c => c.Name); // Tied sorting
+            //Query syntax
+            var query2 = from car in cars
+                         orderby car.Combined descending, car.Name ascending
+                         select car;
 
-            foreach (var car in cars)
+            foreach (var car in query.Take(10))
             {
-                Console.WriteLine(car.Name);
+                Console.WriteLine($"{car.Name} : {car.Combined}");
             }
         }
 
@@ -36,10 +43,10 @@ namespace Cars
             // Extension method syntax
             var query2 =
                 File.ReadAllLines(path)
-                .Skip(1)
-                .Where(line => line.Length > 1)
-                .Select(Car.ParseFromCsv)
-                .ToList();
+                    .Skip(1)
+                    .Where(line => line.Length > 1)
+                    .Select(Car.ParseFromCsv)
+                    .ToList();
 
             return query.ToList();
         }

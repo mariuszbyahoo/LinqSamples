@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+//using Features.Linq;
 
 namespace LinqSamples
 {
@@ -21,7 +22,8 @@ namespace LinqSamples
                 new Employee {Id = 3, Name = "Alex"}
             };
 
-            IEnumerator<Employee> enumerator = sales.GetEnumerator();
+            Console.WriteLine(developers.Count());
+            IEnumerator<Employee> enumerator = developers.GetEnumerator();
             while (enumerator.MoveNext())
             {
                 Console.WriteLine(enumerator.Current.Name);

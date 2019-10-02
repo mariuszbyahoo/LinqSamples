@@ -40,13 +40,20 @@ namespace Cars
             // object; good for working with files which contains a plenty of columns to 
             // deal with
 
-            var result3 = cars.Select(c => new { c.Manufacturer, c.Name, c.Combined });
-            // result3 above products the same result as the select statement from line 33
+            // SelectMany below flattens the data; in the case below it selects specific 
+            // car's name from the list of car objects. It flattens the multi-dimension collections.
+            var result3 = cars.SelectMany(c => c.Name);
 
-            foreach (var car in query2.Take(10))
-            {
-                Console.WriteLine($"{car.Manufacturer} {car.Name} : {car.Combined}");
-            }
+                foreach (var character in result3)
+                {
+                    Console.WriteLine(character);
+                }
+           
+
+            //foreach (var car in query2.Take(10))
+            //{
+            //    Console.WriteLine($"{car.Manufacturer} {car.Name} : {car.Combined}");
+            //}
         }
 
         private static List<Car> ProcessFile(string path)

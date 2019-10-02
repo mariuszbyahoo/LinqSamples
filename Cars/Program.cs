@@ -29,7 +29,8 @@ namespace Cars
                 {
                     Manufacturer = manufacturer,
                     Cars = carGroup
-                };
+                } into result //This statement outputs the gouping result into a new object
+                group result by result.Manufacturer.Headquaters; // Now we may group them all
 
             // Extension method syntax, in this case a little bit simplier.
 
@@ -40,14 +41,16 @@ namespace Cars
                                     Manufacturer = m,
                                     Cars = g
                                 })
-                .OrderBy(m => m.Manufacturer.Headquaters);
+                .GroupBy(m => m.Manufacturer.Headquaters); // same as above, flattening both collections into one.
 
-            foreach (var group in query)
+            foreach (var group in query2)
             {
 
-                Console.WriteLine(group.Manufacturer.Headquaters);
+                Console.WriteLine(group.Key);
 
-                foreach (var car in group.Cars.OrderByDescending(c => c.Combined).Take(2))
+                foreach (var car in group.SelectMany(g => g.Cars)
+                    .OrderByDescending(c => c.Combined)
+                    .Take(3))
                 {
                     Console.WriteLine($"\t{car.Name} : {car.Combined} ");
                 }

@@ -10,43 +10,22 @@ namespace LinqSamples
     {
         static void Main(string[] args)
         {
-            string path = @"C:\windows";
-            ShowLargeFilesWithLinq(path);
-            Console.WriteLine("------------------------------------");
-            ShowLargeFilesWithoutLinq(path);
-        }
-
-        private static void ShowLargeFilesWithLinq(string path)
-        {
-            var query = new DirectoryInfo(path).GetFiles()
-                .OrderByDescending(f => f.Length)
-                .Take(5);
-            foreach(var file in query.Take(5))
+            IEnumerable<Employee> developers = new Employee[]
             {
-                Console.WriteLine($"{file.Name,-20} : {file.Length,10:N0}");
-            }
-        }
+                new Employee {Id = 1, Name = "Scott" },
+                new Employee {Id = 2, Name = "Chris" }
+            };
 
-        private static void ShowLargeFilesWithoutLinq(string path)
-        {
-            DirectoryInfo directory = new DirectoryInfo(path);
-            FileInfo[] files = directory.GetFiles();
-            Array.Sort(files, new FileInfoComparer());
-
-
-            for(int i = 0; i < 5; i ++)
+            IEnumerable<Employee> sales = new List<Employee>()
             {
-                FileInfo file = files[i];
-                Console.WriteLine($"{file.Name, -20} : {file.Length, 10:N0}");
-            }
-        }
-    }
+                new Employee {Id = 3, Name = "Alex"}
+            };
 
-    public class FileInfoComparer : IComparer<FileInfo>
-    {
-        public int Compare(FileInfo x, FileInfo y)
-        {
-            return y.Length.CompareTo(x.Length);
+            IEnumerator<Employee> enumerator = sales.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                Console.WriteLine(enumerator.Current.Name);
+            }
         }
     }
 }

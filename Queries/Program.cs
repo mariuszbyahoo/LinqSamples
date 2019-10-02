@@ -17,10 +17,13 @@ namespace Queries
             };
 
             var query = movies.Filter(m => m.Year > 2000);
+            // later LINQ queries can be either modified:
+            query = query.Take(1);
 
-            foreach (var movie in query)
+            var enumerator = query.GetEnumerator();
+            while (enumerator.MoveNext())
             {
-                Console.WriteLine(movie.Title);
+                Console.WriteLine(enumerator.Current.Title);
             }
         }
     }

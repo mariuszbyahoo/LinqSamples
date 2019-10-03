@@ -34,7 +34,18 @@ namespace Cars
 
         private static void QueryData()
         {
-            Console.WriteLine("Tu wstaw query \n kończe pracę."); ;
+            var db = new CarDb();
+            var query = from car in db.Cars
+                        orderby car.Combined descending, car.Name ascending
+                        select car;
+
+            var queryExMeth =
+                db.Cars.OrderByDescending(c => c.Combined).ThenBy(c => c.Name).Take(10);
+
+            foreach (var car in queryExMeth)
+            {
+                Console.WriteLine($"{car.Name} : {car.Combined}");
+            }
         }
 
         private static void QueryXml()

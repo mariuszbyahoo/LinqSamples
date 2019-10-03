@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Xml.Linq;
 
 namespace Cars
@@ -12,6 +13,16 @@ namespace Cars
     {
         static void Main(string[] args)
         {
+            // Difference between Func<x,y> and Expression<Func<x,y>>:
+            Func<int, int> square = x => x * x;
+            Expression<Func<int, int, int>> add = (x, y) => x + y;
+            Func<int, int, int> addI = add.Compile();
+
+            var result = addI(3,5);
+            Console.WriteLine(result);
+            Console.WriteLine(add);
+
+            // EF actions
             Database.SetInitializer(new DropCreateDatabaseIfModelChanges<CarDb>());
             InsertData();
             QueryData();
@@ -40,7 +51,9 @@ namespace Cars
                         select car;
 
             var queryExMeth =
-                db.Cars.OrderByDescending(c => c.Combined).ThenBy(c => c.Name).Take(10);
+                db.Cars.Where(c => c.Manufacturer=="BMW")
+                .OrderByDescending(c => c.Combined)
+                .ThenBy(c => c.Name).Take(10);
 
             foreach (var car in queryExMeth)
             {

@@ -10,13 +10,8 @@ namespace Cars
 {
     class Program
     {
-        // CSVs moved to ../Bin/Debug/netcoreapp 3.0/..
         static void Main(string[] args)
         {
-            // Changing the Thread's culture Needed because of the CSV's format
-            CultureInfo culture = new CultureInfo("en-US");
-            Thread.CurrentThread.CurrentCulture = culture;
-            Thread.CurrentThread.CurrentUICulture = culture;
 
             XDocument document;
             XElement cars;

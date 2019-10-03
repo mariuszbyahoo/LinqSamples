@@ -18,25 +18,45 @@ namespace Cars
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
 
-            var records = ProcessFile("fuel.csv");
+            XDocument document;
+            XElement cars;
 
-            var document = new XDocument();
-            var cars = new XElement("Cars");
-
-            foreach (var record in records)
-            {
-                var car = new XElement("Car");
-                var name = new XElement("Name", record.Name);
-                var combined = new XElement("Combined", record.Combined);
-
-                car.Add(name);
-                car.Add(combined);
-
-                cars.Add(car);
-            }
+            CreateXml(out document, out cars);
+            QueryXml();
 
             document.Add(cars);
             document.Save("fuel.xml");
+        }
+
+        private static void QueryXml()
+        {
+            var document = XDocument.Load("fuel.xml");
+
+            var query =
+                from element in document.Element("Cars").Elements("Car")
+                where element.Attribute("Manufacturer").Value == "BMW"
+                select element.Attribute("Name").Value;
+
+            foreach (var name in query)
+            {
+                Console.WriteLine(name);
+            }
+        }
+
+        private static void CreateXml(out XDocument document, out XElement cars)
+        {
+            var records = ProcessFile("fuel.csv");
+
+            document = new XDocument();
+            cars = new XElement("Cars",
+
+            from record in records
+            select new XElement("Car",
+            new XAttribute("Name", record.Name),
+            new XAttribute("Combined", record.Combined),
+            new XAttribute("Manufacturer", record.Manufacturer))
+
+            );
         }
 
         private static List<Manufacturer> ProcessManufacturers(string path)

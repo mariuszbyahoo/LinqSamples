@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Xml.Linq;
 
 namespace Cars
 {
@@ -17,41 +18,25 @@ namespace Cars
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
 
-            var cars = ProcessFile("fuel.csv");
-            var manufacturers = ProcessManufacturers("manufacturers.csv");
-            // Query syntax
-            var query =
-                from car in cars
-                group car by car.Manufacturer into carGroup
-                select new
-                {
-                    Name = carGroup.Key,
-                    Max = carGroup.Max(c => c.Combined),
-                    Min = carGroup.Min(c => c.Combined),
-                    Avg = carGroup.Average(c => c.Combined)
-                } into result
-                orderby result.Max descending
-                select result;
+            var records = ProcessFile("fuel.csv");
 
-            // Extension method syntax, in this case a little bit simplier.
+            var document = new XDocument();
+            var cars = new XElement("Cars");
 
-            var query2 =
-                manufacturers.GroupJoin(cars, m => m.Name, c => c.Manufacturer,  
-                            (m, g) =>
-                                new {
-                                    Manufacturer = m,
-                                    Cars = g
-                                })
-                .GroupBy(m => m.Manufacturer.Headquaters); // same as above, flattening both collections into one.
-
-            foreach (var result in query)
+            foreach (var record in records)
             {
+                var car = new XElement("Car");
+                var name = new XElement("Name", record.Name);
+                var combined = new XElement("Combined", record.Combined);
 
-                Console.WriteLine(result.Name);
-                Console.WriteLine($"\t Max: {result.Max}");
-                Console.WriteLine($"\t Min: {result.Min}");
-                Console.WriteLine($"\t Avg: {result.Avg}");
+                car.Add(name);
+                car.Add(combined);
+
+                cars.Add(car);
             }
+
+            document.Add(cars);
+            document.Save("fuel.xml");
         }
 
         private static List<Manufacturer> ProcessManufacturers(string path)
@@ -89,6 +74,35 @@ namespace Cars
 
             return query2.ToList();
         }
+    }
+
+    public class CarStatistics
+    {
+        public CarStatistics()
+        {
+            Max = Int32.MinValue;
+            Min = Int32.MaxValue;
+        }
+        internal CarStatistics Accumulate(Car car)
+        {
+            Count += 1;
+            Total += car.Combined;
+            Max = Math.Max(Max, car.Combined);
+            Min = Math.Min(Min, car.Combined);
+            return this;
+        }
+
+        public CarStatistics Compute()
+        {
+            Average = Total / Count;
+            return this;
+        }
+
+        public int Max { get; set; }
+        public int Min { get; set; }
+        public double Average { get; set; }
+        public int Count { get; set; }
+        public int Total { get; set; }
     }
 
     public static class CarExtensions

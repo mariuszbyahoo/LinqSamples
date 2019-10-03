@@ -50,11 +50,17 @@ namespace Cars
                         orderby car.Combined descending, car.Name ascending
                         select car;
 
-            var queryExMeth =
-                db.Cars.Where(c => c.Manufacturer=="BMW")
-                .OrderByDescending(c => c.Combined)
-                .ThenBy(c => c.Name).Take(10);
+            db.Database.Log = Console.WriteLine;
 
+            var queryExMeth =
+                db.Cars.Where(c => c.Manufacturer == "BMW")
+                .OrderByDescending(c => c.Combined)
+                .ThenBy(c => c.Name)
+                .Take(10)
+                .ToList();
+
+
+            Console.WriteLine(queryExMeth.Count());
             foreach (var car in queryExMeth)
             {
                 Console.WriteLine($"{car.Name} : {car.Combined}");
